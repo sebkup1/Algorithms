@@ -11,7 +11,7 @@ struct OrcsGroup
   int size;
   int toll;
   OrcsGroup(int s, int t) : size(s), toll(t) {};
-  OrcsGroup() {size = 0; toll = 0;}
+  OrcsGroup() { size = 0; toll = 0; }
 };
 
 class GroupNode
@@ -24,52 +24,37 @@ public:
 
   void add(GroupNode* newNode)
   {
-    GroupNode* temp = this;
-    while(temp->next != nullptr)
-    {
-      temp = temp->next;
-    }
-
-    temp->next = newNode;
+    if (next != nullptr)
+      next->add(newNode);
+    else
+      next = newNode;
   }
 
   GroupNode(int size) : size(size), battles(0), next(nullptr) {}
 };
 
-GroupNode* copy(GroupNode* head)
+GroupNode* copy(GroupNode* node)
 {
-  if (head == nullptr) return nullptr;
-  GroupNode* newHead = new GroupNode(*head);
-  GroupNode* temp = head;
-  GroupNode* temp2 = newHead;
+  if (node == nullptr) return nullptr;
 
-  while(temp->next != nullptr)
-  {
-    temp2->next = new GroupNode(*temp->next);
-    temp = temp->next;
-    temp2 = temp2->next;
-    temp2->next = nullptr;
+  GroupNode* newNode = new GroupNode(*node);
 
-    if (temp == nullptr) break;
-  }
+  if (node->next != nullptr)
+    newNode->next = copy(node->next);
 
-  return newHead;
+  return newNode;
 }
 
-int countOwnTrups(GroupNode* head)
+int countOwnTrups(GroupNode* node)
 {
   int trups = 0;
-  if (head == nullptr) return trups;
+  if (node == nullptr) return trups;
 
-  GroupNode* temp = head;
+  if (node->next != nullptr)
+    return node->size + countOwnTrups(node->next);
+  else
+    return node->size;
 
-  while (temp != nullptr)
-  {
-    trups += temp->size;
-    temp = temp->next;
-  }
-
-  return trups;
 }
 
 GroupNode* batleAftermatch(int enemyOrcs, GroupNode* head)
@@ -82,10 +67,10 @@ GroupNode* batleAftermatch(int enemyOrcs, GroupNode* head)
   if (temp->size > enemyOrcs)
   {
     temp->size -= enemyOrcs;
-    goto IncNumberOfBattles;
+    goto IncNumberOfBattles; 
   }
 
-  while(true) ///temp->size <= enemyOrcs
+  while (true)
   {
     if (enemyOrcs == 0) break;
 
@@ -100,7 +85,7 @@ GroupNode* batleAftermatch(int enemyOrcs, GroupNode* head)
     }
     else
     {
-      temp->size -+ enemyOrcs;
+      temp->size -= enemyOrcs;
       break;
     }
 
@@ -109,14 +94,14 @@ GroupNode* batleAftermatch(int enemyOrcs, GroupNode* head)
   // 3 batles
 IncNumberOfBattles:
   temp = newHead;
-  while(true)
+  while (true)
   {
     if (temp == nullptr) break;
 
     temp->battles++;
     if (temp->battles == 3)
     {
-      newHead=temp->next;
+      newHead = temp->next;
       GroupNode* toDelete = temp;
       temp = temp->next;
       delete toDelete;
@@ -128,27 +113,22 @@ IncNumberOfBattles:
   return newHead;
 }
 
-void deleteGroup(GroupNode* head)
+void deleteGroup(GroupNode* group)
 {
-  if (head == nullptr) return;
+  if (group == nullptr) return;
 
-  GroupNode* temp = head;
-  while(temp != nullptr)
-  {
-    GroupNode* tem2 = temp; 
-    temp = temp->next;
-    delete tem2;
-    head = nullptr;
-  }
+  if (group->next != nullptr)
+    deleteGroup(group->next);
+
+  delete group;
 }
 
 GroupNode* first = nullptr;
-GroupNode* last = nullptr;
 
-void processGroups(int N, int currentGroup,  OrcsGroup* orcsGroups, GroupNode* head, int moneySpend)
+void processGroups(int N, int currentGroup, OrcsGroup* orcsGroups, GroupNode* head, int moneySpend)
 {
   // last Group
-  if (currentGroup == N )
+  if (currentGroup == N)
   {
     if (minSum > moneySpend)
       minSum = moneySpend;
@@ -160,14 +140,14 @@ void processGroups(int N, int currentGroup,  OrcsGroup* orcsGroups, GroupNode* h
   int money;
   GroupNode* newHead;
 
-  // batel (if no of own orc grater or equal than enemy)
+  // batel (if number of own orc grater or equal than enemy)
   int ownTrups = countOwnTrups(head);
   if (ownTrups >= orcsGroups[currentGroup].size)
   {
     money = moneySpend;
     newHead = copy(head);
     newHead = batleAftermatch(orcsGroups[currentGroup].size, newHead);
-    processGroups(N, currentGroup+1, orcsGroups, newHead, money);
+    processGroups(N, currentGroup + 1, orcsGroups, newHead, money);
     deleteGroup(newHead);
   }
 
@@ -184,24 +164,20 @@ void processGroups(int N, int currentGroup,  OrcsGroup* orcsGroups, GroupNode* h
   {
     newHead = new GroupNode(orcsGroups[currentGroup].size);
   }
-  processGroups(N, currentGroup+1, orcsGroups, newHead, money);
+  processGroups(N, currentGroup + 1, orcsGroups, newHead, money);
   deleteGroup(newHead);
 
   // pass
   money = moneySpend;
   money += orcsGroups[currentGroup].toll;
   newHead = copy(head);
-  processGroups(N, currentGroup+1, orcsGroups, newHead, money);
+  processGroups(N, currentGroup + 1, orcsGroups, newHead, money);
   deleteGroup(newHead);
-
-
-
 }
 
 int main(int argc, char** argv)
 {
-
-  int moneySum=0;
+  int moneySum = 0;
   int test_case;
   int T;
   int N;
@@ -219,7 +195,7 @@ int main(int argc, char** argv)
 
     OrcsGroup* orcsGroup = new OrcsGroup[N];
 
-    for (int i = 0; i < N; i ++)
+    for (int i = 0; i < N; i++)
     {
       cin >> orcsGroup[i].size;
       cin >> orcsGroup[i].toll;
