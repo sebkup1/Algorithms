@@ -10,34 +10,136 @@ int conver2int(const char*, int size);
 
 void run(const char* str)
 {
-  int i = 0;
-
-  while (str[i] != 0)
-  {
-    i++;
-  }
-
-  char* newStr = new char[++i];
-
-  i = 0;
-  while (str[i] != 0)
-  {
-    newStr[i] = str[i];
-    i++;
-  }
-
-  newStr[i] = 0;
-
+  // starting program
   int instCounter = 0;
   save(1 << 31, instCounter++);
 
-  i = 0;
+  int i = 0;
+  bool firstIsReg;
+
+  // 1. add first component
+
+  str[i] == 'R' ? firstIsReg = true : firstIsReg = false;
+
+  // fisrt check if it's mull expression
+
+  while (str[i] != '-' && str[i] != '+' && str[i] != '*' && str[i] != 0)  i++;
+
+  bool firstIsMullExp;
+
+  str[i] == '*' ? firstIsMullExp = true : firstIsMullExp = false;
+
+  if (!firstIsMullExp)
+  {
+    if (firstIsReg)
+    {
+      if (str[i] != 0) i--;
+
+      int reg = conver2int(str + 1, i);
+
+      // ADD R16, reg
+      int cmd = 0;
+      cmd = 1 << 27;
+      int ri = 16;
+      ri <<= 18;
+      reg <<= 13;
+      cmd |= ri;
+      cmd |= reg;
+      save(cmd, instCounter++);
+    }
+    else
+    {
+      int val = conver2int(str, i);
+      int cmd = 1 << 29;
+      int ri = 16;
+      ri <<= 18;
+      cmd |= ri;
+      cmd |= val;
+      save(cmd, instCounter++);
+    }
+  }
+
+  // 2. procede rest of formula
   while (str[i] != 0)
   {
+    if (str[i] == '+' || str[i] == '-')
+    {
+      char sign = str[i];
+      int tempIt = ++i;
+
+      // check if part of mulltiplication expression
+      while (str[i] != '+' && str[i] != '-' && str[i] != '*' && str[i] != 0) i++;
+
+      if (str[i] == '*')
+      {
+        continue;
+      }
+
+      // Register case
+      if (str[tempIt] == 'R')
+      {
+        tempIt++;
+
+        if (sign == '+')
+        {
+          // ADD R16, reg
+          int reg = conver2int(str + tempIt, i - tempIt);
+          int cmd = 0;
+          cmd = 1 << 27;
+          int ri = 16 << 18;
+          reg <<= 13;
+          cmd |= ri;
+          cmd |= reg;
+          save(cmd, instCounter++);
+        }
+        else if (sign == '-')
+        {
+          // SUB R16, reg
+          int reg = conver2int(str + tempIt, i - tempIt);
+          int cmd = 0;
+          cmd = 1 << 26;
+          int ri = 16 << 18;
+          reg <<= 13;
+          cmd |= ri;
+          cmd |= reg;
+          save(cmd, instCounter++);
+        }
+      }
+      else
+      {
+        if (sign == '+')
+        {
+          // ADD R16, val
+          int val = conver2int(str + tempIt, i - tempIt);
+          int cmd = 1 << 29;
+          int ri = 16 << 18;
+          cmd |= ri;
+          cmd |= val;
+          save(cmd, instCounter++);
+        }
+        else if (sign == '-')
+        {
+          // SUB R16, val
+          int val = conver2int(str + tempIt, i - tempIt);
+          int cmd = 1 << 28;
+          int ri = 16 << 18;
+          cmd |= ri;
+          cmd |= val;
+          save(cmd, instCounter++);
+        }
+      }
+
+      // back to last sign
+      i--;
+    }
+
+
+
     // find multiplicatons
-    if (str[i] == '*')
+    else if (str[i] == '*')
     {
       bool firstIsReg;
+
       // get first operand 
       int tempIt = i;
       while (str[tempIt] != '-' && str[tempIt] != '+' && tempIt > 0)  tempIt--;
@@ -46,18 +148,18 @@ void run(const char* str)
       if (tempIt == 0)
         sign = '+';
       else
-        sign = newStr[tempIt];
+        sign = str[tempIt];
 
       int lhsPos = tempIt;
 
       if (tempIt > 0)
-      tempIt++;
+        tempIt++;
 
-      //    reg or constVal
+      // reg or constVal
       if (str[tempIt] == 'R')
       {
         firstIsReg = true;
-        
+
         tempIt++;
       }
       else
@@ -67,7 +169,6 @@ void run(const char* str)
 
       int firstOperand = conver2int(str + tempIt, i - tempIt);
 
-      
 
       // get second operand
       tempIt = i;
@@ -88,8 +189,7 @@ void run(const char* str)
 
       // load R17, constVal
       cmd = 1 << 30;
-      ri = 17;
-      ri <<= 18;
+      ri = 17 << 18;
       cmd |= ri;
       cmd |= secOperatnd;
       save(cmd, instCounter++);
@@ -116,8 +216,7 @@ void run(const char* str)
         {
           // ADD R16, reg
           cmd = 1 << 27;
-          ri = 16;
-          ri <<= 18;
+          ri = 16 << 18;
           firstOperand <<= 13;
           cmd |= ri;
           cmd |= firstOperand;
@@ -127,8 +226,7 @@ void run(const char* str)
         {
           // SUB R16, reg
           cmd = 1 << 26;
-          ri = 16;
-          ri <<= 18;
+          ri = 16 << 18;
           firstOperand <<= 13;
           cmd |= ri;
           cmd |= firstOperand;
@@ -141,8 +239,7 @@ void run(const char* str)
         {
           // ADD R16, constVal1
           cmd = 1 << 29;
-          ri = 16;
-          ri <<= 18;
+          ri = 16 << 18;
           cmd |= ri;
           cmd |= firstOperand;
           save(cmd, instCounter++);
@@ -151,8 +248,7 @@ void run(const char* str)
         {
           // SUB R16, constVal1
           cmd = 1 << 28;
-          ri = 16;
-          ri <<= 18;
+          ri = 16 << 18;
           cmd |= ri;
           cmd |= firstOperand;
           save(cmd, instCounter++);
@@ -163,8 +259,7 @@ void run(const char* str)
 
       // ADD R18, 1
       cmd = 1 << 29;
-      ri = 18;
-      ri <<= 18;
+      ri = 18 << 18;
       cmd |= ri;
       cmd |= 1;
       save(cmd, instCounter++);
@@ -173,159 +268,22 @@ void run(const char* str)
       // CJMP R18, R17, 2 instr ahead
       cmd = 1 << 24;
       cmd |= ri; // prevoiusly shifted
-      ri = 17;
-      ri <<= 13;
+      ri = 17 << 13;
       cmd |= ri;
-      int rk = (19) << 8;
+      int rk = 19 << 8;
       cmd |= rk;
       save(cmd, instCounter++);
 
       // JMP 3 instr before
       cmd = 1 << 25;
-      rk = (20) << 8;
+      rk = 20 << 8;
       cmd |= rk;
       save(cmd, instCounter++);
 
-
-      while (lhsPos <= i)
-      {
-        newStr[lhsPos] = ' ';
-        lhsPos++;
-      }
-
-    }
-
-    if (str[i] == 0) break;
-    i++;
-  }
-
-
-  //////////////////////////////////////////
-  // now only additions and substractions
-  i = 0;
-
-  //add first substract
-  if (newStr[i] == 'R')
-  {
-    while (newStr[i] != '-' && newStr[i] != '+' && newStr[i] != ' ')  i++;
-
-    if (newStr[i] != 0) i--;
-
-    int reg = conver2int(newStr + 1, i);
-
-    // ADD R16, reg
-    int cmd = 0;
-    cmd = 1 << 27;
-    int ri = 16;
-    ri <<= 18;
-    reg <<= 13;
-    cmd |= ri;
-    cmd |= reg;
-    save(cmd, instCounter++);
-  }
-  else
-  {
-    while (newStr[i] != '-' && newStr[i] != '+' && newStr[i] != ' ')  i++;
-
-    int val = conver2int(newStr, i);
-    int cmd = 1 << 29;
-    int ri = 16;
-    ri <<= 18;
-    cmd |= ri;
-    cmd |= val;
-    save(cmd, instCounter++);
-  }
-
-
-  // next substract
-  while (newStr[i] != 0)
-  {
-    if (newStr[i] == '+' || newStr[i] == '-')
-    {
-      char sign = newStr[i];
-      int previ = ++i;
-      while (newStr[i] != '-' && newStr[i] != '+' && newStr[i] != ' ' && newStr[i] != 0)  i++;
-
-
-      if (newStr[previ] == 'R')
-      {
-        while (newStr[i] != '-' && newStr[i] != '+' && newStr[i] != ' ' && newStr[i] != 0)  i++;
-
-        i--;
-
-        if (sign == '+')
-        {
-          // ADD R16, reg
-          int reg = conver2int(newStr + previ + 1, i - previ);
-          int cmd = 0;
-          cmd = 1 << 27;
-          int ri = 16;
-          ri <<= 18;
-          reg <<= 13;
-          cmd |= ri;
-          cmd |= reg;
-          save(cmd, instCounter++);
-        }
-        else if (sign == '-')
-        {
-          // SUB R16, reg
-          int reg = conver2int(newStr + previ + 1, i - previ);
-          int cmd = 0;
-          cmd = 1 << 26;
-          int ri = 16;
-          ri <<= 18;
-          reg <<= 13;
-          cmd |= ri;
-          cmd |= reg;
-          save(cmd, instCounter++);
-        }
-        else
-        {
-          cout << "bad 5" << endl;
-        }
-
-
-      }
-      else
-      {
-        while (newStr[i] != '-' && newStr[i] != '+' && newStr[i] != ' ' && newStr[i] != 0)  i++;
-
-
-        if (sign == '+')
-        {
-          // ADD R16, val
-          int val = conver2int(newStr + previ, i - previ);
-          int cmd = 1 << 29;
-          int ri = 16;
-          ri <<= 18;
-          cmd |= ri;
-          cmd |= val;
-          save(cmd, instCounter++);
-        }
-        else if (sign == '-')
-        {
-          // SUB R16, val
-          int val = conver2int(newStr + previ, i - previ);
-          int cmd = 1 << 28;
-          int ri = 16;
-          ri <<= 18;
-          cmd |= ri;
-          cmd |= val;
-          save(cmd, instCounter++);
-        }
-        else
-        {
-          cout << "Bad 8";
-        }
-
-        if (newStr[i] != 0) i--;
-      }
-
     }
 
     i++;
   }
-
 
 
   int cmd = 1 << 23;
