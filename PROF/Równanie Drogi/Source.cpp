@@ -9,8 +9,8 @@ struct OneTimeRepDist
   int start;
   OneTimeRepDist* prev;
   OneTimeRepDist* next;
-  OneTimeRepDist(){ };
-  OneTimeRepDist(int s, OneTimeRepDist* pr, OneTimeRepDist* nxt) : start(s), prev(pr), next(nxt){};
+  OneTimeRepDist() { };
+  OneTimeRepDist(int s, OneTimeRepDist* pr, OneTimeRepDist* nxt) : start(s), prev(pr), next(nxt) {};
 
   OneTimeRepDist(OneTimeRepDist& pr)
   {
@@ -21,6 +21,10 @@ struct OneTimeRepDist
   };
 
 };
+
+int countDists = 0;
+
+void removeOTRD(OneTimeRepDist* otrd);
 
 bool damagedRoadDists[10001];
 bool coveredRoad[10001];
@@ -72,11 +76,11 @@ int main(int argc, char** argv)
 
     // I. cover the road
     // cover first damage
-    OneTimeRepDist first(firstDamage, nullptr, nullptr);
+    OneTimeRepDist* first = new OneTimeRepDist(firstDamage, nullptr, nullptr);
 
     int i = firstDamage;
 
-    OneTimeRepDist* last = &first;
+    OneTimeRepDist* last = first;
 
     // cover next
     while (true)
@@ -102,19 +106,33 @@ int main(int argc, char** argv)
 
           // II. move back prev
 
-          // prev Daamge
-          int prevDamage = last->start + K - 1;
-
           // find next damage
           int nextDamage = i + 1;
 
           int tempIt = current->start + K - 1;
           while (!damagedRoadDists[nextDamage] && nextDamage < lastDamage) nextDamage++;
 
-
-          if (nextDamage < lastDamage && i - prevDamage - 1 < K && nextDamage - i > i - prevDamage)
+          // current move left
+          int prevEnd = last->start + K - 1;
+          int currHippoteticEnd = i + K - 1;
+          if (nextDamage < lastDamage && i - prevEnd <= K - 1 &&
+            (i - prevEnd) <= nextDamage - currHippoteticEnd)
           {
             current->start = i - K + 1;
+          }
+
+
+          // try move prev
+          if (current->start > prevEnd && last->prev != nullptr &&
+            (current->start + K - 1 < nextDamage)) // move last fully left
+          {
+            int tempIt = prevEnd;
+
+            while (!damagedRoadDists[tempIt])
+            {
+              last->start--;
+              tempIt--;
+            }
           }
 
           last = current;
@@ -133,11 +151,27 @@ int main(int argc, char** argv)
       tempIt--;
     }
 
-    OneTimeRepDist* dist = &first;
+
+    //// try move before last
+    //int prevEnd = last->prev->start + K - 1;
+    //if (true/*last->start > prevEnd */ /*&&
+    //  (last->start + K - 1 < nextDamage)*/) // move last fully left
+    //{
+    //  int tempIt = prevEnd;
+
+    //  while (!damagedRoadDists[tempIt])
+    //  {
+    //    last->prev->start--;
+    //    tempIt--;
+    //  }
+    //}
+
+    OneTimeRepDist* dist = first;
 
     // count coveredRoad regions
     while (dist != nullptr)
     {
+      //cout << "(" << dist->start << "): ";
       int tempIt = dist->start;
 
       while (tempIt < dist->start + K)
@@ -146,17 +180,47 @@ int main(int argc, char** argv)
         {
           coveredRoad[tempIt] = true;
           coveredDistances++;
+          //cout << tempIt << " ";
         }
 
         tempIt++;
       }
-      //cout << dist->start << " ";
+      //cout << endl;
+
       dist = dist->next;
     }
 
-    // Print the answer to standard output(screen).
-    first;
 
+    //cout << endl;
+    //for (int i = 0; i < lastDamage + K + 10; i++)
+    //{
+    //  cout << i << ",";
+
+    //  if (damagedRoadDists[i])
+    //    cout << 1;
+    //  else
+    //    cout << 0;
+
+    //  cout << ",";
+
+    //  if (coveredRoad[i])
+    //    cout << 1;
+    //  else
+    //    cout << 0;
+
+    //  cout << endl;
+
+    //  if (i == 290)
+    //    cout << endl;
+
+    //}
+
+
+
+    countDists = 0;
+    removeOTRD(first);
+
+    // Print the answer to standard output(screen).
     cout << "#" << test_case << " " << coveredDistances << endl;
   }
 
@@ -164,3 +228,14 @@ int main(int argc, char** argv)
   return 0; // Your program should return 0 on normal termination.
 
 }
+
+void removeOTRD(OneTimeRepDist* otrd)
+{
+  if (otrd->next != nullptr)
+  {
+    removeOTRD(otrd->next);
+  }
+  delete otrd;
+  countDists++;
+}
+
