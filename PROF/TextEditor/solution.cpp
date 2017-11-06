@@ -39,7 +39,7 @@ Word* oldCachedEnd;
 void init()
 {
   cursorPosition = 0;
-  curCISPos = 0;
+  curCISPos = -1;
   prevCursorPos = -1;
   cachedWordsPosition = -1;
 
@@ -148,6 +148,7 @@ void cmd_revert()
 {
   if (!cached) // pop data to cache
   {
+    // begin
     if (consecInsertedBegin->prev != nullptr)
     {
       consecInsertedBegin->prev->next = consecInsertedEnd->next;
@@ -159,6 +160,7 @@ void cmd_revert()
       oldCachedBegin = nullptr;
     }
 
+    // end
     if (consecInsertedEnd->next != nullptr)
     {
       consecInsertedEnd->next->prev = consecInsertedBegin->prev;
@@ -210,10 +212,7 @@ void cmd_revert()
     {
       oldCachedEnd->prev = consecInsertedEnd;
     }
-    //else
-    //{
-    //  consecInsertedEnd->next = oldCachedEnd;
-    //}
+
 
     cursorPosition = prevCursorPos;
     curCISPos = prevCursorPos;
@@ -274,29 +273,20 @@ void get_substring(int mPosition, int mLength, char res[])
       last = it;
     }
   }
-
-
 }
 
 void revertDataUpdate(Word* recentWord, int status)
 {
-  if (!cached)
+  if (cursorPosition - recentWord->size != curCISPos)
   {
-    if (consecInsertedBegin == nullptr)
-    {
-      consecInsertedBegin = recentWord;
-    }
+    // clean cache
 
-    if (status == 1 || cursorPosition - recentWord->size != curCISPos)
-    {
-      // clean cache
-      consecInsertedBegin = recentWord;
-
-      curCISPos = cursorPosition;
-    }
-
-    consecInsertedEnd = recentWord;
+    cached = false;
+    consecInsertedBegin = recentWord;
   }
+
+  consecInsertedEnd = recentWord;
+  curCISPos = cursorPosition;
 }
 
 void deleteWords(Word* word)
