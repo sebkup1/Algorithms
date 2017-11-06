@@ -1,0 +1,159 @@
+5
+
+
+7
+2 I
+2 professional
+0 1
+2 wantget
+0 5
+2 to
+9 5 6 togetp
+
+11
+2 aaa
+2 bb
+2 ccc
+2 dddd
+1
+1
+2 eee
+9 10 7 ddeee
+1
+1
+9 10 7 ddeee
+
+
+
+14
+2 tc4
+2 move1
+0 5
+0 8
+2 move2
+1
+1
+2 aaa
+9 1 6 c4move
+1
+1
+0 5
+2 bbb
+9 4 8 obbbve1m
+
+
+
+9
+2 teststring
+0 4
+9 2 6 ststri
+2 remove
+1
+9 2 6 ststri
+0 2
+1
+9 2 6 stremo
+
+
+100
+2 qghumeaylnlf
+1
+2 ircvscxggbwkfnqduxwf
+9 15 19 duxwf
+2 srtkjprepggxrpnr
+9 22 21 tkjprepggxrpnr
+2 wcysyycqpevikef
+2 znimkkasvwsre
+2 kycxfxtlsgypsfadpooefx
+2 coejuvpvaboygpoeylfpbn
+2 jvrvipyamyehwqnqrq
+9 30 22 gxrpnrwcysyycqpevikefz
+2 jloovaow
+2 whmsnc
+2 coksfzkvatxdknlyjyhfixjs
+2 kkufnuxx
+2 zbmnmgqo
+0 176
+2 lyhnko
+2 gzqrcddiuteiojway
+2 pvscmpsajlfvgubfaaov
+9 21 13 rtkjprepggxrp
+2 trkdcpwsrtesjw
+2 izcobzcnfwlqij
+9 124 24 rqjloovaowwhmsnccoksfzkv
+2 xhrcbldvgylw
+2 usbmborxtlhcsmpxohgm
+2 keufdx
+2 ogbgxpeyanfetcukep
+2 hkljugggekjdqzjenpevqgx
+2 pjsrd
+2 azujllch
+2 fqmkimwzob
+2 ybxduunfsksrsrt
+2 mqdcyzjeeuhmsrqcozi
+2 pfioneeddpszrnavymmta
+2 dzqsoe
+2 vnpppsuacba
+1
+2 mhecthlegrpunk
+2 bppweqtgjopar
+2 wzdqyoxytjbbhawdy
+2 prjbxphoohpkwqyuhrqzh
+2 nfuvqnqqlrzjpxio
+2 liexdzuzos
+2 rusvojbrzmwzpowkjilef
+2 amdigpnpuuhgxpqnj
+2 mwaxxmnsnhhlqqrz
+2 ltfzot
+2 tnzxug
+2 dsmzcnockvfajfrmx
+2 howkbjzwucwljfri
+2 myhchzriwkba
+9 233 14 qyuhrqzhnfuvqn
+2 cbceyhjugi
+2 tbvtrehbbcpxifb
+9 8 14 gbwkfnqduxwfsr
+1
+2 kcfqckc
+0 95
+2 kubmjrmbsztsshf
+2 efwsjrxjhgu
+2 upzwweiqu
+2 ixiqflduuveoow
+2 udhnefnjhaimuczfskuidub
+2 iswtbrec
+2 kabfcvkdzeztoidukuhjzef
+2 zzbfkqdpqzikfobucdhthxdj
+2 jelrl
+2 xamceroswitdptp
+2 lifkeljytihrcqaybnefxnx
+2 zedyyhngycdru
+9 94 6 akubmj
+2 eckotrwospo
+2 hfozqvlqf
+2 wkmfxdyygmd
+2 szsgovsodkjghcwmbmxrm
+2 yfyqgajqkcklznayxqkqoyz
+2 yubzazcpkhktk
+2 zivcuypurfmbis
+2 kyrgzvxdhpoamvafyra
+9 284 15 wospohfozqvlqfw
+2 htqdihersigbhzj
+2 jxmmyspna
+2 ewkegjccvhhrjvbjt
+2 djootgpknfpfycg
+2 eowqrwwwpzsqm
+2 ogepspxnvjiupalyynmk
+2 uvklhsecdwra
+2 fmzkg
+2 dfodkjmjqwiq
+1
+2 qhimvfvuzwyvijgfullkj
+2 hsjafbtlkmfqr
+2 jfjnhhssqctydteamdc
+2 prhtnegyiwxgcjwlgrsmea
+2 rwtvjsjbaoiojlwhypn
+2 uihoswkifygtydhacwyh
+9 2 7 cvscxgg
+9 50 20 fznimkkasvwsrekycxfx
+
