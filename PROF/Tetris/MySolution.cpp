@@ -7,6 +7,8 @@ void putZerosInblock(int* block);
 void copyBlock(int* old, int* newb);
 void rotate90();
 int findHighest();
+void printBoard();
+void printBlock();
 
 int* board = nullptr;
 int boardWidth;
@@ -43,7 +45,7 @@ void newBlock(int block[BLOCK_MAX_SIZE][BLOCK_MAX_SIZE], int width, int height)
   {
     for (int j = 0; j < width; j++)
     {
-      curBlock[i*3 + j] = block[i][j];
+      curBlock[i * 3 + j] = block[i][j];
     }
   }
 }
@@ -84,11 +86,18 @@ void rotate90()
   curBlock[7] = tempBlock[5];
   curBlock[8] = tempBlock[2];
 
-  int offset = 0;
-  if (curBlockHeight < 3)
+
+  while (curBlock[0] == 0 && curBlock[3] == 0 && curBlock[6] == 0)
   {
-    offset = (3 - curBlockHeight);
-    curBlockPos -= offset;
+    curBlock[0] = curBlock[1];
+    curBlock[3] = curBlock[4];
+    curBlock[6] = curBlock[7];
+
+    curBlock[1] = curBlock[2];
+    curBlock[4] = curBlock[5];
+    curBlock[7] = curBlock[8];
+
+    curBlock[2] = curBlock[5] = curBlock[8] = 0;
   }
 
 
@@ -115,37 +124,16 @@ int land()
   curBlock[7] = tempBlock[1];
   curBlock[8] = tempBlock[2];
 
-  //cout << endl << "Board1: " << endl;
-  //for (int i = 0; i < 8; i++)
-  //{
-  //  for (int j = 0; j < boardWidth; j++)
-  //  {
-  //    cout << board[i * boardWidth + j];
-  //  }
-  //  cout << endl;
-  //}
-
-  //cout << endl;
-
-  //cout << "Klocek: " << endl;
-  //for (int i = 0; i < 3; i++)
-  //{
-  //  for (int j = 0; j < 3; j++)
-  //  {
-  //    cout << curBlock[i * 3 + j];
-  //  }
-  //  cout << endl;
-  //}
-
-  //cout << "curBlockPos: " << curBlockPos << endl;
-
+  // move block if it's out of board
+  while (curBlockPos + curBlockWidth > boardWidth)
+    curBlockPos--;
 
   // Calculate min dist
   int minDist = MAX_BOARD_HEIGHT;
   int properRow;
 
   for (int boi = curBlockPos, bli = 0;
-    bli < 3;
+    bli < curBlockWidth;
     boi++, bli++)
   {
     bool toConsider = false;
@@ -232,27 +220,16 @@ int land()
     }
   }
 
-
-  //cout << endl << "Board2: " << endl;
-  //for (int i = 0; i < 8; i++)
-  //{
-  //  for (int j = 0; j < boardWidth; j++)
-  //  {
-  //    cout << board[i * boardWidth + j];
-  //  }
-  //  cout << endl;
-  //}
-
-  //cout << endl;
-
-  int highest = findHighest();
-  return highest;
+  printBoard();
+  printBlock();
+  return findHighest();
 }
 
 
 
 
 // helpers
+
 int findHighest()
 {
   int highest = 0;
@@ -286,4 +263,37 @@ void copyBlock(int* old, int* newb)
   {
     newb[i] = old[i];
   }
+}
+
+
+// debug
+
+void printBoard()
+{
+  cout << endl << "Board: " << endl;
+  for (int i = 0; i < 8; i++)
+  {
+    for (int j = 0; j < boardWidth; j++)
+    {
+      cout << board[i * boardWidth + j];
+    }
+    cout << endl;
+  }
+
+  cout << endl;
+}
+
+void printBlock()
+{
+  cout << "Current Block: " << endl;
+  for (int i = 0; i < 3; i++)
+  {
+    for (int j = 0; j < 3; j++)
+    {
+      cout << curBlock[i * 3 + j];
+    }
+    cout << endl;
+  }
+
+  cout << "curBlockPos: " << curBlockPos << endl;
 }
