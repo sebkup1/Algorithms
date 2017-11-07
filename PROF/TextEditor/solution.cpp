@@ -26,9 +26,8 @@ void revertDataUpdate(Word*, int);
 void printAll();
 int cursorPosition;
 int curCISPos;
-int cachedWordsPosition;
 bool cached = false;
-int prevCursorPos;
+bool moved = false;
 
 Word* head = nullptr;
 Word* consecInsertedBegin;
@@ -40,8 +39,6 @@ void init()
 {
   cursorPosition = 0;
   curCISPos = -1;
-  prevCursorPos = -1;
-  cachedWordsPosition = -1;
 
   // clearing
   if (head != nullptr)
@@ -70,8 +67,10 @@ void cmd_input(char ch[])
     return;
   }
 
+  // find place in list that cursor is pointing at
   while (it != nullptr)
   {
+    // is at begining
     if (cursorPosition == 0)
     {
       Word* newWord = new Word(ch, nullptr, head);
@@ -81,7 +80,7 @@ void cmd_input(char ch[])
       return;
     }
 
-    //is beside the words
+    // is beside the words
     if (curPos == cursorPosition)
     {
       Word* newWord = new Word(ch, it->prev, it);
@@ -95,9 +94,6 @@ void cmd_input(char ch[])
       {
         head = newWord;
       }
-
-      //if (it->next != nullptr)
-      //  it->next->prev = newWord;
 
       cursorPosition = curPos + newWord->size;
       revertDataUpdate(newWord, 1);
@@ -118,11 +114,8 @@ void cmd_input(char ch[])
       it->next = middleNewWord;
       newWord->prev = middleNewWord;
 
-      //consecInsertedBegin = middleNewWord;
-      //consecInsertedEnd = middleNewWord;
       cursorPosition += middleNewWord->size;
       revertDataUpdate(middleNewWord, 1);
-      printAll();
       return;
     }
 
@@ -171,8 +164,6 @@ void cmd_revert()
       oldCachedEnd = nullptr;
     }
 
-    prevCursorPos = cursorPosition;
-
     if (head == nullptr) cursorPosition = 0;
     else
     {
@@ -187,7 +178,6 @@ void cmd_revert()
       cursorPosition = curPos + it->size;
     }
     cached = true;
-    cachedWordsPosition = cursorPosition;
   }
   else // get words from cache
   {
@@ -205,7 +195,6 @@ void cmd_revert()
       }
 
       head = consecInsertedBegin;
-      curCISPos = prevCursorPos;
     }
 
     if (oldCachedEnd != nullptr)
@@ -213,33 +202,37 @@ void cmd_revert()
       oldCachedEnd->prev = consecInsertedEnd;
     }
 
+    Word* it = head;
+    int curPos = 0;
+    while (it != consecInsertedEnd->next)
+    {
+      curPos += it->size;
+      it = it->next;
+    }
 
-    cursorPosition = prevCursorPos;
-    curCISPos = prevCursorPos;
+    cursorPosition = curPos;
+    curCISPos = cursorPosition;
     cached = false;
   }
-  printAll();
 
 }
 
 void cmd_movecursor(int mCursor)
 {
   cursorPosition = mCursor;
-  printAll();
+  moved = true;
 }
 
 void get_substring(int mPosition, int mLength, char res[])
 {
   Word* it = head;
-  printAll();
-  Word* last = nullptr;
   int curPos = 0;
   while (true)
   {
     curPos += it->size;
     if (curPos >= mPosition)
     {
-      //cur word offset
+      //current word offset
       int offSet = curPos - mPosition;
 
       int curWordPos = it->size - offSet;
@@ -268,25 +261,49 @@ void get_substring(int mPosition, int mLength, char res[])
 
     if (it->next != nullptr)
       it = it->next;
-    else
-    {
-      last = it;
-    }
+
   }
 }
 
 void revertDataUpdate(Word* recentWord, int status)
 {
-  if (cursorPosition - recentWord->size != curCISPos)
+  head;
+  if (consecInsertedBegin == nullptr || (moved && !cached))
   {
-    // clean cache
-
-    cached = false;
     consecInsertedBegin = recentWord;
+    consecInsertedEnd = recentWord;
+    curCISPos = recentWord->size;
+    moved = false;
+    return;
   }
 
-  consecInsertedEnd = recentWord;
-  curCISPos = cursorPosition;
+  if (cursorPosition - recentWord->size == curCISPos)
+  {
+    consecInsertedEnd = recentWord;
+    curCISPos = cursorPosition;
+    return;
+  }
+
+  if (cached && moved)
+  {
+    // clean cache
+    Word* it = consecInsertedBegin;
+    while (it != nullptr && it != consecInsertedEnd->next)
+    {
+      Word* toDelete = it;
+      it = it->next;
+      delete toDelete;
+    }
+
+    cached = false;
+    moved = false;
+
+    consecInsertedBegin = recentWord;
+    consecInsertedEnd = recentWord;
+    curCISPos = cursorPosition;
+    return;
+  }
+
 }
 
 void deleteWords(Word* word)
@@ -310,6 +327,4 @@ void printAll()
       it = it->next;
     }
   }
-
-
 }
