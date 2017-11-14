@@ -1,13 +1,13 @@
 #include <stdio.h>
 
-enum AddrState{
+enum AddrState  {
   Empty,
   Processed,
   ToProcess
 };
 
 int curHeadPos;
-AddrState* disc;
+AddrState disc[100000];
 int trackSize;
 
 //fcfs
@@ -20,7 +20,6 @@ bool lookDir;
 
 void init(int track_size, int head){
   trackSize = track_size;
-  disc = new AddrState[track_size];
 
   for (int i = 0; i < track_size; i++)
   {

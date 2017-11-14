@@ -107,7 +107,7 @@ static int run(int tc){
 
 int main(){
 	setbuf(stdout, NULL);
-	freopen("C:\\Users\\Sebastian\\Documents\\Visual Studio 2013\\Projects\\discScheduler\\Debug\\sample_input.txt", "r", stdin);
+	freopen("C:\\Users\\s.kupis\\Documents\\Visual studio 2013\\Projects\\disc_scheduler\\disc_scheduler\\sample_input.txt", "r", stdin);
 
 	int total_score = 0, T;
 	scanf("%d", &T);
@@ -123,5 +123,3 @@ int main(){
 	printf("Total score: %d\n", total_score);
 	return 0;
 }
-
-//const int MAX = 100000;
