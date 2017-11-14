@@ -16,6 +16,7 @@ int curBlock[9];
 int curBlockPos;
 int curBlockWidth;
 int curBlockHeight;
+int highest;
 
 void init(int w)
 {
@@ -31,6 +32,7 @@ void init(int w)
   }
 
   boardWidth = w;
+  highest = MAX_BOARD_HEIGHT;
 }
 
 void newBlock(int block[BLOCK_MAX_SIZE][BLOCK_MAX_SIZE], int width, int height)
@@ -220,9 +222,10 @@ int land()
     }
   }
 
-  printBoard();
-  printBlock();
-  return findHighest();
+  //printBoard();
+  //printBlock();
+  highest = findHighest();
+  return highest;
 }
 
 
