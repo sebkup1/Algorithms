@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 using namespace std;
 
@@ -77,8 +79,7 @@ int run() {
 
 int main() {
   setbuf(stdout, NULL);
-  freopen("C:\\Users\\Sebastian\\Documents\\Visual Studio 2013\\Projects\\AntiVirus\\Debug\\sample_input.txt", "r", stdin);
-
+  freopen("C:\\Users\\s.kupis\\Documents\\Visual Studio 2013\\Projects\\AntiVir\\AntiVir\\sample_input.txt", "r", stdin);
   int totalScore = 0;
 
   int T;
