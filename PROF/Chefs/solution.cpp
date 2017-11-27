@@ -170,7 +170,6 @@ void tick(int currenttime) {
 
       if (ratioB > ratioW)
       {
-        finishcook(worseOrder->chef->chiefId);
         startcook(worseOrder->chef->chiefId, bestOrder->orderid);
         bestOrder->chef = worseOrder->chef;
         worseOrder->chef = nullptr;

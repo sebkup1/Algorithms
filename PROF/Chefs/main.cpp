@@ -154,11 +154,10 @@ int main() {
 
 		init(N);
 
-		for (currenttime = 0, okay = OK; /*okay == OK &&*/ currenttime <= endtime; ++currenttime)
+		for (currenttime = 0, okay = OK; okay == OK && currenttime <= endtime; ++currenttime)
 			doticking(currenttime);
 
 		int point = okay == OK ? earned * 100 / total : 0;
-    point = earned * 100 / total;
 		totalscore += point >= EVAL_CUTLINE ? 100 : 0;
 
 		printf("#%d %d\n", testcase, earned * 100 / total);
